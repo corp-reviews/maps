@@ -1,7 +1,7 @@
 <!-- src/routes/+page.svelte -->
 
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
 
     let map;
 
@@ -19,6 +19,16 @@
 
     // Load the map when the component is mounted / 컴포넌트가 마운트될 때 지도를 로드
     onMount(() => {
+        // Track page view / 페이지 뷰 추적
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'pageview',
+            'page': {
+                'url': window.location.href,
+                'title': document.title
+            }
+        });
+
         // Check if Google Maps API is loaded / Google Maps API가 로드되었는지 확인
         if (typeof google !== 'undefined' && google.maps) {
             initMap();
@@ -31,6 +41,18 @@
                 }
             }, 1000);
         }
+    });
+
+    // Track page unload / 페이지 언로드 추적
+    onDestroy(() => {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'pageunload',
+            'page': {
+                'url': window.location.href,
+                'title': document.title
+            }
+        });
     });
 </script>
 
